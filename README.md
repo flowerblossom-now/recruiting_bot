@@ -1,42 +1,51 @@
 # Recruiting Bot — Mindl
 
-Telegram-бот, который сам принимает анкеты кандидатов, плюс веб-панель, чтобы HR не рылся в чатах. Бот ведёт диалог под три вакансии (DevOps / Frontend / Backend), задавая вопросы по специальности, а всё, что он собрал, сразу оказывается в таблице на панели — с фильтрами в реальном времени, поиском по навыкам и экспортом в Excel. Приглашение или отказ кандидату можно отправить прямо оттуда, одной кнопкой, без переключения в Telegram. База — обычный SQLite, никаких внешних серверов, плюс кнопка бэкапа на всякий случай.
+> **Prototype / demo project.**
 
-## Запуск через Docker
+A Telegram bot that takes candidate applications by itself, paired with a web dashboard so HR isn't digging through chat history. The bot runs a guided interview for three roles (DevOps / Frontend / Backend) with role-specific questions, and every application lands straight in a dashboard table — real-time filters, skill search, Excel export. Inviting or rejecting a candidate is one click from the dashboard, no need to switch back to Telegram. Storage is plain SQLite, no external services required, plus a one-click backup for peace of mind.
+
+## Highlights
+
+- Guided Telegram interview per role, no manual data entry
+- Live dashboard: filter, search by skill, export to Excel
+- Invite / reject candidates straight from the dashboard
+- Self-contained SQLite storage with one-click backup
+
+## Run with Docker
 
 ```bash
-cp .env.example .env      # вписать BOT_TOKEN и пароль панели
-docker compose up -d      # поднимет бота и панель, с авторестартом при падении
+cp .env.example .env      # set BOT_TOKEN and dashboard password
+docker compose up -d      # starts the bot and dashboard, auto-restarts on crash
 ```
 
-Панель откроется на `http://localhost:5050`. Остановить — `docker compose down` (данные останутся в volume).
+The dashboard runs on `http://localhost:5050`. Stop with `docker compose down` (data persists in the volume).
 
-Чтобы показать панель клиенту не пустой, есть демо-данные:
+To show the dashboard to a client with sample data already in it:
 
 ```bash
-python3 seed_demo.py   # добавит 8 кандидатов в разных статусах
+python3 seed_demo.py   # adds 8 candidates in various statuses
 ```
 
-## Запуск без Docker
+## Run without Docker
 
-Нужен Python 3.9+ и токен бота от [@BotFather](https://t.me/BotFather).
+You'll need Python 3.9+ and a bot token from [@BotFather](https://t.me/BotFather).
 
 ```bash
-python3 -m venv venv && source venv/bin/activate   # на Windows: venv\Scripts\activate
+python3 -m venv venv && source venv/bin/activate   # Windows: venv\Scripts\activate
 pip install -r requirements.txt
-cp .env.example .env   # вписать BOT_TOKEN и HR_PANEL_PASSWORD
-python3 bot.py         # в одном терминале
-python3 hr_panel.py    # в другом — панель на http://localhost:5000, пароль по умолчанию admin
+cp .env.example .env   # set BOT_TOKEN and HR_PANEL_PASSWORD
+python3 bot.py         # terminal 1
+python3 hr_panel.py    # terminal 2 — dashboard on http://localhost:5000, default password: admin
 ```
 
-## Как это выглядит в работе
+## How it plays out
 
-Кандидат находит бота в Telegram, жмёт `/start`, выбирает вакансию и отвечает на вопросы. HR открывает панель и видит нового кандидата в таблице — дальше можно фильтровать, искать по навыкам, приглашать или отказывать прямо оттуда.
+A candidate finds the bot on Telegram, hits `/start`, picks a role, and answers the questions. HR opens the dashboard and sees the new candidate in the table — from there it's filtering, skill search, invites, or rejections, all in one place.
 
-## Команды бота
+## Bot commands
 
-| Команда   | Что делает                |
-|-----------|----------------------------|
-| `/start`  | Начать заполнение анкеты   |
-| `/cancel` | Отменить заполнение        |
-| `/help`   | Показать справку           |
+| Command   | What it does                |
+|-----------|------------------------------|
+| `/start`  | Start filling out the form   |
+| `/cancel` | Cancel the current form      |
+| `/help`   | Show help                    |
