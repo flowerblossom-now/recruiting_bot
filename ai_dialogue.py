@@ -10,14 +10,12 @@
 
 from __future__ import annotations
 
-import asyncio
 import logging
 import re
-from typing import Optional
 
 import aiohttp
 
-from config import AI_BASE_URL, AI_API_KEY, AI_DIALOGUE_MODEL, COMPANY_NAME
+from config import AI_API_KEY, AI_BASE_URL, AI_DIALOGUE_MODEL, COMPANY_NAME
 
 logger = logging.getLogger(__name__)
 
@@ -53,7 +51,7 @@ SYSTEM_FOLLOWUP = (
 )
 
 
-async def _chat(system: str, user: str, timeout: int = HUMANIZE_TIMEOUT) -> Optional[str]:
+async def _chat(system: str, user: str, timeout: int = HUMANIZE_TIMEOUT) -> str | None:
     """Один запрос к LLM. Возвращает текст или None при ошибке/таймауте."""
     # qwen2.5 без reasoning-режима: max_tokens безопасен и режет болтливость
     payload = {
@@ -69,19 +67,18 @@ async def _chat(system: str, user: str, timeout: int = HUMANIZE_TIMEOUT) -> Opti
     headers = {"Authorization": f"Bearer {AI_API_KEY}"}
     try:
         client_timeout = aiohttp.ClientTimeout(total=timeout)
-        async with aiohttp.ClientSession(timeout=client_timeout) as session:
-            async with session.post(
-                f"{AI_BASE_URL}/chat/completions",
-                json=payload,
-                headers=headers,
-            ) as resp:
-                if resp.status != 200:
-                    logger.warning("AI dialogue API статус %s", resp.status)
-                    return None
-                data = await resp.json()
-                text = data["choices"][0]["message"]["content"].strip()
-                return _clean(text)
-    except (asyncio.TimeoutError, aiohttp.ClientError):
+        async with aiohttp.ClientSession(timeout=client_timeout) as session, session.post(
+            f"{AI_BASE_URL}/chat/completions",
+            json=payload,
+            headers=headers,
+        ) as resp:
+            if resp.status != 200:
+                logger.warning("AI dialogue API статус %s", resp.status)
+                return None
+            data = await resp.json()
+            text = data["choices"][0]["message"]["content"].strip()
+            return _clean(text)
+    except (TimeoutError, aiohttp.ClientError):
         logger.warning("AI dialogue: таймаут или сетевая ошибка")
         return None
     except Exception:
@@ -149,7 +146,7 @@ def is_shallow(answer: str) -> bool:
     return len(answer.strip()) < SHALLOW_ANSWER_LEN
 
 
-async def make_followup(question_text: str, answer: str) -> Optional[str]:
+async def make_followup(question_text: str, answer: str) -> str | None:
     """Сгенерировать уточняющий вопрос к поверхностному ответу.
 
     Возвращает None, если генерация не удалась — тогда бот просто

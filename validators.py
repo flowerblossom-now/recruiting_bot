@@ -3,10 +3,9 @@
 from __future__ import annotations
 
 import re
-from typing import Optional, Tuple
 
 
-def normalize_phone(phone: str) -> Optional[str]:
+def normalize_phone(phone: str) -> str | None:
     """Нормализует российский номер телефона в формат +7XXXXXXXXXX."""
     if not phone:
         return None
@@ -26,7 +25,7 @@ def normalize_phone(phone: str) -> Optional[str]:
     return f"+{digits}"
 
 
-def validate_phone(text: str) -> Tuple[bool, str]:
+def validate_phone(text: str) -> tuple[bool, str]:
     """Проверить, похож ли текст на телефон, и нормализовать.
 
     Возвращает (is_valid, normalized_or_error).
@@ -42,7 +41,7 @@ def validate_email(text: str) -> bool:
     return bool(re.match(r"^[^@\s]+@[^@\s]+\.[^@\s]+$", text))
 
 
-def validate_contact(text: str) -> Tuple[bool, str]:
+def validate_contact(text: str) -> tuple[bool, str]:
     """Проверить контакт — телефон или email.
 
     Возвращает (is_valid, normalized_value_or_error).
@@ -64,14 +63,14 @@ def validate_contact(text: str) -> Tuple[bool, str]:
     return False, "Введите корректный email или телефон"
 
 
-def validate_name(text: str) -> Tuple[bool, str]:
+def validate_name(text: str) -> tuple[bool, str]:
     """Проверить ФИО: минимум 2 символа."""
     if not text or len(text.strip()) < 2:
         return False, "Введите имя (минимум 2 символа)"
     return True, text.strip()
 
 
-def validate_experience(text: str) -> Tuple[bool, float]:
+def validate_experience(text: str) -> tuple[bool, float]:
     """Разобрать опыт работы: число, дробь или текст.
 
     Принимает: «5», «0.5», «1,5», «3 года», «6 месяцев», «1 год 6 месяцев»,

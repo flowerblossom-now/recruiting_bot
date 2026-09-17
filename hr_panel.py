@@ -31,8 +31,8 @@ from config import (
     HR_PANEL_PASSWORD,
     HR_PANEL_PORT,
     HR_PANEL_SECRET_KEY,
-    STATUS_OPTIONS,
     POSITIONS,
+    STATUS_OPTIONS,
 )
 from database import backup_db, get_all_candidates, get_candidate_by_id, init_db, update_hr_status
 

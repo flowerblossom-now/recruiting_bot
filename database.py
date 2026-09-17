@@ -7,7 +7,6 @@ import shutil
 import sqlite3
 from datetime import datetime
 from pathlib import Path
-from typing import Optional
 
 from config import DB_PATH
 
@@ -123,12 +122,12 @@ def save_candidate(data: dict) -> int:
 def get_all_candidates(
     sort_by: str = "created_at",
     sort_order: str = "DESC",
-    status_filter: Optional[str] = None,
-    hr_status_filter: Optional[str] = None,
-    position_filter: Optional[str] = None,
-    min_experience: Optional[int] = None,
-    lang_filter: Optional[str] = None,
-    search_name: Optional[str] = None,
+    status_filter: str | None = None,
+    hr_status_filter: str | None = None,
+    position_filter: str | None = None,
+    min_experience: int | None = None,
+    lang_filter: str | None = None,
+    search_name: str | None = None,
 ) -> list[dict]:
     """Получить список кандидатов с фильтрацией и сортировкой."""
     allowed_columns = {
@@ -185,7 +184,7 @@ def get_all_candidates(
         conn.close()
 
 
-def get_candidate_by_id(candidate_id: int) -> Optional[dict]:
+def get_candidate_by_id(candidate_id: int) -> dict | None:
     """Получить одного кандидата по id."""
     conn = get_connection()
     try:
@@ -201,7 +200,7 @@ def get_candidate_by_id(candidate_id: int) -> Optional[dict]:
         conn.close()
 
 
-def get_candidate_by_telegram_id(telegram_id: int) -> Optional[dict]:
+def get_candidate_by_telegram_id(telegram_id: int) -> dict | None:
     """Получить кандидата по telegram_id."""
     conn = get_connection()
     try:
@@ -253,7 +252,7 @@ def update_hr_status(candidate_id: int, hr_status: str) -> bool:
         conn.close()
 
 
-def backup_db(backup_dir: Optional[Path] = None) -> Path:
+def backup_db(backup_dir: Path | None = None) -> Path:
     """Создать резервную копию базы данных.
 
     Возвращает путь к файлу бэкапа.

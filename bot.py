@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import asyncio
+import contextlib
 import json
 import logging
 import sys
@@ -477,10 +478,8 @@ async def fallback(message: Message) -> None:
 def setup_logging() -> None:
     """Настроить логирование в консоль и файл."""
     handlers: list[logging.Handler] = [logging.StreamHandler(sys.stdout)]
-    try:
+    with contextlib.suppress(OSError):
         handlers.append(logging.FileHandler(str(LOG_FILE), encoding="utf-8"))
-    except OSError:
-        pass
     logging.basicConfig(
         level=logging.INFO,
         format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
