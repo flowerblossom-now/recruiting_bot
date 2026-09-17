@@ -9,3 +9,9 @@ bot.log
 .vscode/
 .env
 .DS_Store
+.venv/
+tests/
+.github/
+.git/
+ruff.toml
+pytest.ini
